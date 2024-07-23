@@ -19,8 +19,9 @@ knitr::opts_chunk$set(
 ## Authors
 Erqiang Hu
 
-Department of Bioinformatics, School of Basic Medical Sciences, 
-Southern Medical University.
+Department of Pathology, Albert Einstein College of Medicine, Bronx, NY 10461, USA.
+Einstein Pathology Single-cell & Bioinformatics laboratory, Bronx, NY 10461, USA.
+Montefiore Einstein Comprehensive Cancer Center, Albert Einstein College of Medicine, Bronx, NY 10461, USA.
 
 
 ## Introduction
