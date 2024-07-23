@@ -3,12 +3,16 @@
 
 ## :writing_hand: Authors
 
-Erqiang Hu
+### Erqiang Hu
 
 Department of Pathology, Albert Einstein College of Medicine, Bronx, NY
-10461, USA. Einstein Pathology Single-cell & Bioinformatics laboratory,
-Bronx, NY 10461, USA. Montefiore Einstein Comprehensive Cancer Center,
-Albert Einstein College of Medicine, Bronx, NY 10461, USA.
+10461, USA.
+
+Einstein Pathology Single-cell & Bioinformatics laboratory, Bronx, NY
+10461, USA.
+
+Montefiore Einstein Comprehensive Cancer Center, Albert Einstein College
+of Medicine, Bronx, NY 10461, USA.
 
 ## Introduction
 
