@@ -156,6 +156,22 @@ child_list <- AnnotationDbi::as.list(HDO.db::HDOCHILDREN)
 child_list[["DOID:4"]]
 ```
 
+### HDOGENE
+HDOGENE describes the association between DO ids and gene ids based on alliancegenome. 
+get genes of "DOID:0001816"
+```{r}
+HDO_list <- AnnotationDbi::as.list(HDO.db::HDOGENE)
+HDO_list[["DOID:0001816"]]
+```
+### HDOGENENCG
+HDOGENE describes the association between gene ids and ncg ids based on NCG. 
+get disease of gene id 60.
+```{r}
+NCG_list <- AnnotationDbi::as.list(HDO.db::HDOGENENCG)
+NCG_list[["60"]]
+```
+
+
 The HDO.db support the `select()`, `keys()`, `keytypes()`,
 and `columns` interface.
 ```{r}
@@ -163,12 +179,19 @@ columns(HDO.db)
 ## use doid keys
 dokeys <- head(keys(HDO.db))
 res <- select(x = HDO.db, keys = dokeys, keytype = "doid", 
-    columns = c("offspring", "term", "parent"))
+    columns = c("offspring", "term", "parent", "gene"))
 head(res)
+
 ## use term keys
 dokeys <- head(keys(HDO.db, keytype = "term"))
 res <- select(x = HDO.db, keys = dokeys, keytype = "term", 
-    columns = c("offspring", "doid", "parent"))   
+    columns = c("offspring", "doid", "parent", "gene"))   
+head(res)
+
+## use term gene
+dokeys <- head(keys(HDO.db, keytype = "gene"))
+res <- select(x = HDO.db, keys = dokeys, keytype = "gene", 
+    columns = c("doid", "ncg"))   
 head(res)
 ```
 

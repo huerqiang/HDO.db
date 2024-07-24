@@ -37,10 +37,10 @@ library(HDO.db)
 
 ``` r
 library(AnnotationDbi)
-#> 载入需要的程辑包：stats4
-#> 载入需要的程辑包：BiocGenerics
+#> 载入需要的程序包：stats4
+#> 载入需要的程序包：BiocGenerics
 #> 
-#> 载入程辑包：'BiocGenerics'
+#> 载入程序包：'BiocGenerics'
 #> The following objects are masked from 'package:stats':
 #> 
 #>     IQR, mad, sd, var, xtabs
@@ -50,18 +50,18 @@ library(AnnotationDbi)
 #>     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
 #>     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
 #>     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
-#>     Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
-#>     table, tapply, union, unique, unsplit, which.max, which.min
-#> 载入需要的程辑包：Biobase
+#>     Position, rank, rbind, Reduce, rownames, sapply, setdiff, table,
+#>     tapply, union, unique, unsplit, which.max, which.min
+#> 载入需要的程序包：Biobase
 #> Welcome to Bioconductor
 #> 
 #>     Vignettes contain introductory material; view with
 #>     'browseVignettes()'. To cite Bioconductor, see
 #>     'citation("Biobase")', and for packages 'citation("pkgname")'.
-#> 载入需要的程辑包：IRanges
-#> 载入需要的程辑包：S4Vectors
+#> 载入需要的程序包：IRanges
+#> 载入需要的程序包：S4Vectors
 #> 
-#> 载入程辑包：'S4Vectors'
+#> 载入程序包：'S4Vectors'
 #> The following object is masked from 'package:utils':
 #> 
 #>     findMatches
@@ -69,7 +69,7 @@ library(AnnotationDbi)
 #> 
 #>     expand.grid, I, unname
 #> 
-#> 载入程辑包：'IRanges'
+#> 载入程序包：'IRanges'
 #> The following object is masked from 'package:grDevices':
 #> 
 #>     windows
@@ -83,8 +83,9 @@ and HDO.db provide these AnnDbBimap object:
 ls("package:HDO.db")
 #>  [1] "columns"      "HDO"          "HDO.db"       "HDO_dbconn"   "HDO_dbfile"  
 #>  [6] "HDO_dbInfo"   "HDO_dbschema" "HDOALIAS"     "HDOANCESTOR"  "HDOCHILDREN" 
-#> [11] "HDOMAPCOUNTS" "HDOmetadata"  "HDOOFFSPRING" "HDOPARENTS"   "HDOSYNONYM"  
-#> [16] "HDOTERM"      "keys"         "keytypes"     "select"
+#> [11] "HDOGENE"      "HDOGENENCG"   "HDOMAPCOUNTS" "HDOmetadata"  "HDOOFFSPRING"
+#> [16] "HDOPARENTS"   "HDOSYNONYM"   "HDOTERM"      "keys"         "keytypes"    
+#> [21] "select"
 packageVersion("HDO.db")
 #> [1] '1.0.0'
 ```
@@ -108,8 +109,10 @@ toTable(HDOmetadata)
 #> 5                                                                                   20240723
 #> 6                                                                                      HDODb
 HDOMAPCOUNTS
-#>  HDOANCESTOR  HDOCHILDREN HDOOFFSPRING   HDOPARENTS      HDOTERM 
-#>      "70537"      "11636"      "70537"      "11636"      "11598"
+#>   HDOANCESTOR   HDOCHILDREN    HDOHDOGENE HDOHDOGENENCG  HDOOFFSPRING 
+#>       "70537"       "11636"       "77019"        "8244"       "70537" 
+#>    HDOPARENTS       HDOTERM 
+#>       "11636"       "11598"
 ```
 
 ## Fetch whole DO terms
@@ -265,37 +268,75 @@ child_list[["DOID:4"]]
 #> [6] "DOID:225"     "DOID:630"     "DOID:7"
 ```
 
+### HDOGENE
+
+HDOGENE describes the association between DO ids and gene ids based on
+alliancegenome. get genes of “DOID:0001816”
+
+``` r
+HDO_list <- AnnotationDbi::as.list(HDO.db::HDOGENE)
+HDO_list[["DOID:0001816"]]
+#> [1] "3783" "6774" "7157" "5787" "4609"
+```
+
+### HDOGENENCG
+
+HDOGENE describes the association between gene ids and ncg ids based on
+NCG. get disease of gene id 60.
+
+``` r
+NCG_list <- AnnotationDbi::as.list(HDO.db::HDOGENENCG)
+NCG_list[["60"]]
+#> [1] "dlblc, follicular_lymphoma"    "pan-cancer_adult"             
+#> [3] "diffuse_large_B-cell_lymphoma" "pan-cancer_paediatric"        
+#> [5] "bladder_cancer"
+```
+
 The HDO.db support the `select()`, `keys()`, `keytypes()`, and `columns`
 interface.
 
 ``` r
 columns(HDO.db)
-#> [1] "alias"     "ancestor"  "children"  "doid"      "offspring" "parent"   
-#> [7] "synonym"   "term"
+#>  [1] "alias"     "ancestor"  "children"  "doid"      "gene"      "ncg"      
+#>  [7] "offspring" "parent"    "synonym"   "term"
 ## use doid keys
 dokeys <- head(keys(HDO.db))
 res <- select(x = HDO.db, keys = dokeys, keytype = "doid", 
-    columns = c("offspring", "term", "parent"))
+    columns = c("offspring", "term", "parent", "gene"))
 head(res)
-#>           doid offspring         term   parent
-#> 1 DOID:0001816  DOID:265 angiosarcoma DOID:175
-#> 2 DOID:0001816  DOID:268 angiosarcoma DOID:175
-#> 3 DOID:0001816 DOID:4505 angiosarcoma DOID:175
-#> 4 DOID:0001816 DOID:4510 angiosarcoma DOID:175
-#> 5 DOID:0001816 DOID:4512 angiosarcoma DOID:175
-#> 6 DOID:0001816 DOID:4513 angiosarcoma DOID:175
+#>           doid offspring         term   parent gene
+#> 1 DOID:0001816  DOID:265 angiosarcoma DOID:175 3783
+#> 2 DOID:0001816  DOID:265 angiosarcoma DOID:175 4609
+#> 3 DOID:0001816  DOID:265 angiosarcoma DOID:175 5787
+#> 4 DOID:0001816  DOID:265 angiosarcoma DOID:175 6774
+#> 5 DOID:0001816  DOID:265 angiosarcoma DOID:175 7157
+#> 6 DOID:0001816  DOID:268 angiosarcoma DOID:175 3783
+
 ## use term keys
 dokeys <- head(keys(HDO.db, keytype = "term"))
 res <- select(x = HDO.db, keys = dokeys, keytype = "term", 
-    columns = c("offspring", "doid", "parent"))   
+    columns = c("offspring", "doid", "parent", "gene"))   
 head(res)
-#>           doid offspring   parent
-#> 1 DOID:0001816  DOID:265 DOID:175
-#> 2 DOID:0001816  DOID:268 DOID:175
-#> 3 DOID:0001816 DOID:4505 DOID:175
-#> 4 DOID:0001816 DOID:4510 DOID:175
-#> 5 DOID:0001816 DOID:4512 DOID:175
-#> 6 DOID:0001816 DOID:4513 DOID:175
+#>           doid         term offspring   parent gene
+#> 1 DOID:0001816 angiosarcoma  DOID:265 DOID:175 3783
+#> 2 DOID:0001816 angiosarcoma  DOID:265 DOID:175 4609
+#> 3 DOID:0001816 angiosarcoma  DOID:265 DOID:175 5787
+#> 4 DOID:0001816 angiosarcoma  DOID:265 DOID:175 6774
+#> 5 DOID:0001816 angiosarcoma  DOID:265 DOID:175 7157
+#> 6 DOID:0001816 angiosarcoma  DOID:268 DOID:175 3783
+
+## use term gene
+dokeys <- head(keys(HDO.db, keytype = "gene"))
+res <- select(x = HDO.db, keys = dokeys, keytype = "gene", 
+    columns = c("doid", "ncg"))   
+head(res)
+#>           doid  gene                              ncg
+#> 1    DOID:3179  7422                             <NA>
+#> 2    DOID:8577  7433                             <NA>
+#> 3   DOID:10283  7472                     glioblastoma
+#> 4 DOID:0060574  7450 pancreatic_ductal_adenocarcinoma
+#> 5    DOID:1612 55135                             <NA>
+#> 6    DOID:9261  7422                             <NA>
 ```
 
 ## Semantic similarity analysis
@@ -311,8 +352,8 @@ for the vignette.
 
 ``` r
 sessionInfo()
-#> R version 4.3.3 (2024-02-29 ucrt)
-#> Platform: x86_64-w64-mingw32/x64 (64-bit)
+#> R version 4.4.1 (2024-06-14 ucrt)
+#> Platform: x86_64-w64-mingw32/x64
 #> Running under: Windows 11 x64 (build 22631)
 #> 
 #> Matrix products: default
@@ -333,20 +374,20 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] AnnotationDbi_1.64.1 IRanges_2.36.0       S4Vectors_0.40.2    
-#> [4] Biobase_2.62.0       BiocGenerics_0.48.1  HDO.db_1.0.0        
+#> [1] AnnotationDbi_1.66.0 IRanges_2.38.1       S4Vectors_0.42.1    
+#> [4] Biobase_2.64.0       BiocGenerics_0.50.0  HDO.db_1.0.0        
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] crayon_1.5.2            vctrs_0.6.5             httr_1.4.7             
-#>  [4] cli_3.6.2               knitr_1.45              rlang_1.1.3            
-#>  [7] xfun_0.43               DBI_1.2.2               png_0.1-8              
-#> [10] bit_4.0.5               RCurl_1.98-1.14         Biostrings_2.70.3      
-#> [13] htmltools_0.5.8         KEGGREST_1.42.0         rmarkdown_2.27         
-#> [16] evaluate_0.23           bitops_1.0-7            fastmap_1.1.1          
-#> [19] GenomeInfoDb_1.38.8     yaml_2.3.8              memoise_2.0.1          
-#> [22] compiler_4.3.3          RSQLite_2.3.5           blob_1.2.4             
-#> [25] pkgconfig_2.0.3         XVector_0.42.0          rstudioapi_0.16.0      
-#> [28] digest_0.6.35           R6_2.5.1                GenomeInfoDbData_1.2.11
-#> [31] tools_4.3.3             bit64_4.0.5             zlibbioc_1.48.2        
-#> [34] cachem_1.0.8
+#>  [1] crayon_1.5.3            vctrs_0.6.5             httr_1.4.7             
+#>  [4] cli_3.6.3               knitr_1.48              rlang_1.1.4            
+#>  [7] xfun_0.45               DBI_1.2.3               UCSC.utils_1.0.0       
+#> [10] png_0.1-8               jsonlite_1.8.8          bit_4.0.5              
+#> [13] Biostrings_2.72.1       htmltools_0.5.8.1       KEGGREST_1.44.1        
+#> [16] rmarkdown_2.27          evaluate_0.24.0         fastmap_1.2.0          
+#> [19] GenomeInfoDb_1.40.1     yaml_2.3.9              memoise_2.0.1          
+#> [22] compiler_4.4.1          RSQLite_2.3.7           blob_1.2.4             
+#> [25] pkgconfig_2.0.3         XVector_0.44.0          rstudioapi_0.16.0      
+#> [28] digest_0.6.36           R6_2.5.1                GenomeInfoDbData_1.2.12
+#> [31] tools_4.4.1             bit64_4.0.5             zlibbioc_1.50.0        
+#> [34] cachem_1.1.0
 ```

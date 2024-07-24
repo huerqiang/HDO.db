@@ -86,6 +86,28 @@ HDO_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="GENE",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            list(
+                tablename="do_gene",
+                Lcolname="doid",
+                Rcolname="gene"
+            )
+        )
+    ),
+    list(
+        objName="GENENCG",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            list(
+                tablename="gene_ncg",
+                Lcolname="gene",
+                Rcolname="ncg"
+            )
+        )
+    ),
+    list(
         objName="metadata",
         Class="AnnDbBimap",
         L2Rchain=list(
